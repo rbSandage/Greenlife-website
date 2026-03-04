@@ -1,0 +1,107 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  html { scroll-behavior: smooth; }
+  body { font-family: 'DM Sans', sans-serif; background: #f7fdf8; color: #2c3e30; overflow-x: hidden; }
+}
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  html { scroll-behavior: smooth; }
+  body { font-family: 'DM Sans', sans-serif; background: #f7fdf8; color: #2c3e30; overflow-x: hidden; }
+}
+
+@layer components {
+  .btn-primary {
+    @apply bg-green-600 text-white px-8 py-3.5 rounded-full font-heading font-bold text-sm transition-all duration-300 hover:bg-green-500 hover:-translate-y-0.5 hover:shadow-lg hover:shadow-green-600/40 inline-flex items-center gap-2;
+  }
+  .btn-outline {
+    @apply bg-transparent text-white border border-white/30 px-7 py-3.5 rounded-full font-sans font-medium text-sm transition-all duration-300 hover:border-green-400 hover:text-green-400 hover:-translate-y-0.5 inline-flex items-center gap-2;
+  }
+  .btn-white {
+    @apply bg-white text-green-600 px-8 py-3.5 rounded-full font-heading font-bold text-sm transition-all duration-300 hover:bg-green-100 hover:-translate-y-0.5 hover:shadow-lg hover:shadow-black/20 inline-flex items-center gap-2;
+  }
+  .section-label {
+    @apply inline-flex items-center gap-2 text-xs font-heading font-bold tracking-widest uppercase text-green-600 mb-3;
+  }
+  .section-label::before {
+    content: '';
+    @apply block w-7 h-0.5 bg-green-600 rounded-full;
+  }
+  .section-title {
+    @apply font-display font-black text-dark leading-tight mb-3;
+    font-size: clamp(1.9rem, 3vw, 2.8rem);
+  }
+  .card-hover {
+    @apply transition-all duration-300 hover:-translate-y-2 hover:shadow-2xl;
+  }
+}
+
+/* ── Ticker ─────────────────────────────────── */
+.ticker-track { animation: ticker 28s linear infinite; }
+@keyframes ticker { from { transform: translateX(0); } to { transform: translateX(-50%); } }
+
+/* ── Scroll reveal ──────────────────────────── */
+.reveal { opacity: 0; transform: translateY(28px); transition: opacity .6s ease, transform .6s ease; }
+.reveal.visible { opacity: 1; transform: none; }
+
+/* ── Gradient text ──────────────────────────── */
+.gradient-text {
+  background: linear-gradient(135deg, #fff, #52c786);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* ── Admin ──────────────────────────────────── */
+.admin-link-active { @apply bg-green-600/20 text-green-400 border-r-2 border-green-400; }
+
+/* Hero particles */
+.hero-particle {
+  position: absolute;
+  border-radius: 50%;
+  background: rgba(82, 199, 134, 0.07);
+  animation: particleFloat linear infinite;
+}
+@keyframes particleFloat {
+  0%   { transform: translate(0,0) rotate(0deg); }
+  33%  { transform: translate(28px,-18px) rotate(120deg); }
+  66%  { transform: translate(-18px,28px) rotate(240deg); }
+  100% { transform: translate(0,0) rotate(360deg); }
+}
+
+/* Ticker */
+.ticker-track { animation: ticker 28s linear infinite; }
+@keyframes ticker { from { transform: translateX(0); } to { transform: translateX(-50%); } }
+
+/* Scroll reveal */
+.reveal { opacity: 0; transform: translateY(28px); transition: opacity .6s ease, transform .6s ease; }
+.reveal.visible { opacity: 1; transform: none; }
+
+/* Card float */
+@keyframes cardFloat { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
+.card-float { animation: cardFloat 4s ease-in-out infinite; }
+.card-float-2 { animation: cardFloat 4s .5s ease-in-out infinite; }
+.card-float-3 { animation: cardFloat 4s 1s ease-in-out infinite; }
+
+/* Badge float */
+@keyframes badgeFloat { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-6px); } }
+.badge-float-1 { animation: badgeFloat 3s ease-in-out infinite; }
+.badge-float-2 { animation: badgeFloat 3s 1.5s ease-in-out infinite; }
+
+/* Gradient text */
+.gradient-text {
+  background: linear-gradient(135deg, #fff, #52c786);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+/* Admin sidebar active */
+.admin-link-active { @apply bg-green-600/20 text-green-400 border-r-2 border-green-400; }
+
+
