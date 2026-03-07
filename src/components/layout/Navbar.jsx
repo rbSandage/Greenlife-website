@@ -6,6 +6,7 @@ export default function Navbar() {
   const [scrolled, setScrolled] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
   const { pathname } = useLocation();
+  const isHome = pathname === "/";
   useEffect(() => {
     const handleScroll = () => {
       setScrolled(window.scrollY > 50);
@@ -24,14 +25,14 @@ export default function Navbar() {
   ];
 
   return (
-  <nav
-  style={{
-    backgroundColor: scrolled ? 'rgba(255,255,255,0.95)' : 'transparent',
-    backdropFilter: scrolled ? 'blur(10px)' : 'none',
-    transition: 'all 0.4s ease'
-  }}
-  className="fixed top-0 left-0 right-0 z-50 h-[70px] flex items-center px-[6%]"
->
+    <nav
+      style={{
+        backgroundColor: scrolled || !isHome ? "#fffffff2" : "transparent",
+        backdropFilter: scrolled || !isHome ? "blur(10px)" : "none",
+        transition: "all 0.4s ease",
+      }}
+      className="fixed top-0 left-0 right-0 z-50 h-[70px] flex items-center px-[6%]"
+    >
       {/* Logo */}
       <Link
         to="/"
@@ -41,23 +42,24 @@ export default function Navbar() {
           🌿
         </div>
         <div>
-     <div className="font-heading font-semibold text-[1.05rem] leading-tight tracking-normal">
-  <span
-    className={`transition-colors duration-300 ${
-      scrolled ? "text-gray-900" : "text-white"
-    }`}
-  >
-    GreenLife
-  </span>
+          <div className="font-heading font-semibold text-[1.05rem] leading-tight tracking-normal">
+            <span
+              className={`transition-colors duration-300 ${
+                scrolled || !isHome ? "text-gray-900" : "text-white"
+              }`}
+            >
+              GreenLife
+            </span>
 
-  <span
-    className={`transition-colors duration-300 ${
-      scrolled ? "text-green-600" : "text-green-400"
-    }`}
-  >
-    {" "}Cropcare
-  </span>
-</div>
+            <span
+              className={`transition-colors duration-300 ${
+                scrolled || !isHome ? "text-green-600" : "text-green-400"
+              }`}
+            >
+              {" "}
+              Cropcare
+            </span>
+          </div>
           <div className="text-[0.6rem] text-yellow-600 tracking-widest uppercase leading-none">
             Agri Solutions
           </div>
@@ -72,10 +74,8 @@ export default function Navbar() {
               to={l.to}
               className={`text-sm font-medium no-underline transition-colors duration-300 relative group ${
                 pathname === l.to
-                  ? scrolled
                     ? "text-green-600"
-                    : "text-white"
-                  : scrolled
+                  : scrolled ||!isHome
                     ? "text-gray-600 hover:text-green-600"
                     : "text-white/70 hover:text-white"
               }`}
