@@ -12,7 +12,7 @@ import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
 import { MessageCircle, Send } from "lucide-react";
 
-const IMAGE_SRC = "/images/cta/farmer.png"; // ← your image here
+// const IMAGE_SRC = "/images/cta/farmer.png"; // ← your image here
 
 export default function HomeCTA() {
   return (

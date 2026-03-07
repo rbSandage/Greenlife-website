@@ -25,28 +25,28 @@ const LeafIcon = () => (
     <path d="M5 19C5 19 8.5 15.5 12 11.5" stroke="#c4883a" strokeWidth="1.4" strokeLinecap="round" />
   </svg>
 )
-const TruckIcon = () => (
-  <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
-    <rect x="2" y="7" width="14" height="10" rx="1.5" stroke="#3a6b42" strokeWidth="1.4" />
-    <path d="M16 10H20L22.5 13V17H16V10Z" stroke="#3a6b42" strokeWidth="1.4" strokeLinejoin="round" />
-    <circle cx="6.5" cy="18.5" r="1.8" stroke="#c4883a" strokeWidth="1.3" />
-    <circle cx="19.5" cy="18.5" r="1.8" stroke="#c4883a" strokeWidth="1.3" />
-  </svg>
-)
-const PersonIcon = () => (
-  <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
-    <circle cx="12" cy="9.5" r="4.5" stroke="#3a6b42" strokeWidth="1.4" />
-    <path d="M4.5 22C4.5 18.7 7.9 16 12 16C16.1 16 19.5 18.7 19.5 22" stroke="#3a6b42" strokeWidth="1.4" strokeLinecap="round" />
-    <path d="M12 5.5V9.5L14.5 11.5" stroke="#c4883a" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
-  </svg>
-)
-const MedalIcon = () => (
-  <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
-    <circle cx="12" cy="14.5" r="5.5" stroke="#3a6b42" strokeWidth="1.4" />
-    <path d="M8.5 3.5L7 7.5H17L15.5 3.5H8.5Z" stroke="#3a6b42" strokeWidth="1.4" strokeLinejoin="round" />
-    <path d="M9.5 14.8L11.5 16.8L15 12.5" stroke="#c4883a" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" />
-  </svg>
-)
+// const TruckIcon = () => (
+//   <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+//     <rect x="2" y="7" width="14" height="10" rx="1.5" stroke="#3a6b42" strokeWidth="1.4" />
+//     <path d="M16 10H20L22.5 13V17H16V10Z" stroke="#3a6b42" strokeWidth="1.4" strokeLinejoin="round" />
+//     <circle cx="6.5" cy="18.5" r="1.8" stroke="#c4883a" strokeWidth="1.3" />
+//     <circle cx="19.5" cy="18.5" r="1.8" stroke="#c4883a" strokeWidth="1.3" />
+//   </svg>
+// )
+// const PersonIcon = () => (
+//   <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+//     <circle cx="12" cy="9.5" r="4.5" stroke="#3a6b42" strokeWidth="1.4" />
+//     <path d="M4.5 22C4.5 18.7 7.9 16 12 16C16.1 16 19.5 18.7 19.5 22" stroke="#3a6b42" strokeWidth="1.4" strokeLinecap="round" />
+//     <path d="M12 5.5V9.5L14.5 11.5" stroke="#c4883a" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+//   </svg>
+// )
+// const MedalIcon = () => (
+//   <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+//     <circle cx="12" cy="14.5" r="5.5" stroke="#3a6b42" strokeWidth="1.4" />
+//     <path d="M8.5 3.5L7 7.5H17L15.5 3.5H8.5Z" stroke="#3a6b42" strokeWidth="1.4" strokeLinejoin="round" />
+//     <path d="M9.5 14.8L11.5 16.8L15 12.5" stroke="#c4883a" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" />
+//   </svg>
+// )
 
 const CARDS = [
   { num: '01', tag: 'Triple Tested',   title: 'Lab Certified Quality',   Icon: LabIcon,    body: 'Tested across 3 independent labs before reaching your field. Zero compromise on purity or efficacy, guaranteed every batch.' },

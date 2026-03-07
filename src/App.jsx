@@ -1,3 +1,4 @@
+/*eslint-disable*/
 // src/App.jsx
 import { BrowserRouter, Routes, Route, useLocation } from 'react-router-dom'
 import { Toaster } from 'react-hot-toast'
@@ -11,44 +12,11 @@ import Products      from './components/pages/Products'
 import ProductDetail from './components/pages/ProductDetail'
 import About         from './components/pages/About'
 import Contact       from './components/pages/Contact'
-
 import AdminLogin     from './components/admin/AdminLogin'
 import AdminDashboard from './components/admin/AdminDashboard'
 import ProtectedRoute from './components/admin/ProtectedRoute'
 
-function PublicLayout() {
-  const location = useLocation()
-  const isAdmin  = location.pathname.startsWith('/admin')
-  if (isAdmin) return null
-  return (
-    <>
-      <Navbar />
-      <Routes>
-        <Route path="/"           element={<Home />} />
-        <Route path="/products"   element={<Products />} />
-        <Route path="/products/:id" element={<ProductDetail />} />
-        <Route path="/about"      element={<About />} />
-        <Route path="/contact"    element={<Contact />} />
-        <Route path="*"           element={<NotFound />} />
-      </Routes>
-      <Footer />
-    </>
-  )
-}
 
-function AdminLayout() {
-  const { user } = useAuth()
-  return (
-    <Routes>
-      <Route path="/admin/login" element={user ? <AdminDashboard /> : <AdminLogin />} />
-      <Route path="/admin/*" element={
-        <ProtectedRoute>
-          <AdminDashboard />
-        </ProtectedRoute>
-      } />
-    </Routes>
-  )
-}
 
 function NotFound() {
   return (
