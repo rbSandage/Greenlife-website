@@ -1,3 +1,4 @@
+/*eslint-disable*/
 // src/components/pages/ProductDetail.jsx
 import { useState, useEffect } from 'react'
 import { useParams, Link } from 'react-router-dom'

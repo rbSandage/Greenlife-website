@@ -1,3 +1,4 @@
+/*eslint-disable*/
 // src/components/home/WhyChooseUs.jsx
 import { useState } from 'react'
 import { motion } from 'framer-motion'

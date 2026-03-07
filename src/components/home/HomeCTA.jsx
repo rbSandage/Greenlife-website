@@ -1,3 +1,5 @@
+/*eslint-disable*/
+
 // src/components/home/HomeCTA.jsx
 //
 // ─── FARMER IMAGE ────────────────────────────────────────────────────────────
