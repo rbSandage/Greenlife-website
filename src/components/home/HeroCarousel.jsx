@@ -20,7 +20,7 @@
 
 import { useState, useEffect, useRef, useCallback } from 'react'
 import { Link }                                      from 'react-router-dom'
-import { motion, AnimatePresence }                   from 'framer-motion'
+import { motion, AnimatePresence, clamp }                   from 'framer-motion'
 
 // ═══════════════════════════════════════════════════════════
 //  SLIDE DATA
@@ -509,7 +509,7 @@ export default function HeroCarousel() {
       <SlideCounter cur={cur} total={SLIDES.length} />
 
       {/* Layer 4 — main content */}
-      <div className="relative h-full max-w-[1200px] mx-auto px-4 md:px-[5%] flex items-center py-6 lg:py-0" style={{ zIndex: 10, overflow: 'visible' }}>
+      <div className="relative h-full max-w-[1200px] mx-auto px-4 md:px-[5%] flex items-center py-4 lg:py-0" style={{ zIndex: 10, overflow: 'visible' }}>
         <div className="grid grid-cols-1 lg:grid-cols-[1fr_1fr] gap-4 w-full items-center">
 
           {/* MOBILE: image first, then text. DESKTOP: text left only (image right handled below) */}
@@ -518,7 +518,7 @@ export default function HeroCarousel() {
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0  }}
             transition={{ duration: .8, ease: [.22, 1, .36, 1] }}
-            className="flex flex-col"
+            className="flex flex-col items-center lg:items-start text-center lg:text-left"
           >
 
             {/* ── MOBILE product image — TOP (hidden on desktop) ── */}
@@ -529,7 +529,7 @@ export default function HeroCarousel() {
                 animate={{ opacity: 1, scale: 1 }}
                 exit={{ opacity: 0 }}
                 transition={{ duration: .6, delay: .15, ease: [.22, 1, .36, 1] }}
-                className="lg:hidden flex flex-col items-center mb-5"
+                className="lg:hidden flex flex-col items-center mb-3"
               >
                 {/* Glow + image */}
                 <div style={{ position: 'relative', display: 'flex', alignItems: 'center', justifyContent: 'center', width: '100%' }}>
@@ -544,9 +544,9 @@ export default function HeroCarousel() {
                     src={slide.productImage}
                     alt={slide.name}
                     style={{
-                      height: 260,
+                      height: 'clamp(220px,40VscWand,320px)',
                       width: 'auto',
-                      maxWidth: '65vw',
+                      maxWidth: '75vw',
                       objectFit: 'contain',
                       animation: 'productFloat 4s ease-in-out infinite',
                       filter: `drop-shadow(0 20px 32px rgba(0,0,0,.7)) drop-shadow(0 0 32px ${slide.accent}44)`,
@@ -571,7 +571,7 @@ export default function HeroCarousel() {
             )}
 
             {/* ── Eyebrow ── */}
-            <div className="flex items-center gap-2 mb-2 md:mb-5">
+            <div className="flex items-center justify-center lg:justify-start gap-2 mb-1.5 md:mb-5">
               <span className="w-[4px] h-[4px] rounded-full"
                 style={{ background: slide.dotColor, animation: 'pulseDot 2s ease-in-out infinite' }} />
               <span className="font-heading font-bold tracking-[.18em] uppercase"
@@ -581,34 +581,34 @@ export default function HeroCarousel() {
             </div>
 
             {/* ── Heading ── */}
-            <h1 className="font-display font-bold text-white leading-[1.06] tracking-[-0.02em] mb-2 md:mb-4"
-              style={{ fontSize: 'clamp(22px,5.2vw,74px)' }}>
-              {slide.heading[0]}<br />
-              {slide.heading[1]}<br />
+            <h1 className="font-display font-bold text-white leading-[1.1] tracking-[-0.02em] mb-1.5 md:mb-4"
+              style={{ fontSize: 'clamp(18px,5.2vw,74px)' }}>
+              <span className="lg:hidden">{slide.heading[0]} {slide.heading[1]} </span>
+              <span className="hidden lg:inline">{slide.heading[0]}<br />{slide.heading[1]}<br /></span>
               <span style={{ color: '#52c786' }}>{slide.heading[2]}</span>
             </h1>
 
             {/* ── Accent line ── */}
-            <p className="font-heading font-bold tracking-[.16em] uppercase mb-1.5 md:mb-3"
+            <p className="font-heading font-bold tracking-[.16em] uppercase mb-1 md:mb-3"
               style={{ fontSize: 9, color: `${slide.dotColor}99` }}>
               {slide.accentLine}
             </p>
 
             {/* ── Body ── */}
-            <p className="font-sans leading-[1.65] mb-4 md:mb-8 max-w-[420px]"
-              style={{ fontSize: 12, color: "rgba(238,246,238,.42)" }}>
+            <p className="font-sans leading-[1.6] mb-3 md:mb-8 max-w-[420px] mx-auto lg:mx-0"
+              style={{ fontSize: 11, color: "rgba(238,246,238,.42)" }}>
               {slide.body}
             </p>
 
             {/* ── Buttons ── */}
-            <div className="flex flex-col sm:flex-row gap-3">
+            <div className="flex flex-row gap-2 justify-center lg:justify-start">
               <Link to={slide.btnLink}
-                className="inline-flex items-center justify-center gap-2 text-white font-heading font-bold text-xs md:text-sm px-5 py-2.5 md:py-3.5 rounded-lg no-underline transition-all duration-200 hover:-translate-y-0.5"
+                className="inline-flex items-center justify-center gap-1.5 text-white font-heading font-bold text-[10px] md:text-sm px-4 py-2 md:px-5 md:py-3.5 rounded-lg no-underline transition-all duration-200 hover:-translate-y-0.5"
                 style={{ background: slide.btnBg, boxShadow: `0 4px 20px ${slide.btnBg}66` }}>
                 {slide.btnLabel} →
               </Link>
               <Link to={slide.ghostLink}
-                className="inline-flex items-center justify-center gap-2 font-sans font-medium text-xs md:text-sm px-5 py-2.5 md:py-3.5 rounded-lg no-underline transition-all duration-200 border"
+                className="inline-flex items-center justify-center gap-1.5 font-sans font-medium text-[10px] md:text-sm px-4 py-2 md:px-5 md:py-3.5 rounded-lg no-underline transition-all duration-200 border"
                 style={{ color: 'rgba(238,246,238,.5)', borderColor: 'rgba(238,246,238,.14)' }}
                 onMouseEnter={e => { e.currentTarget.style.borderColor = 'rgba(82,199,134,.4)'; e.currentTarget.style.color = '#eef6ee' }}
                 onMouseLeave={e => { e.currentTarget.style.borderColor = 'rgba(238,246,238,.14)'; e.currentTarget.style.color = 'rgba(238,246,238,.5)' }}>
