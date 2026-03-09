@@ -20,7 +20,7 @@
 
 import { useState, useEffect, useRef, useCallback } from 'react'
 import { Link }                                      from 'react-router-dom'
-import { motion, AnimatePresence, clamp }                   from 'framer-motion'
+import { motion, AnimatePresence}                   from 'framer-motion'
 
 // ═══════════════════════════════════════════════════════════
 //  SLIDE DATA
