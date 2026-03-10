@@ -2,9 +2,9 @@
 import { motion } from 'framer-motion'
 import { Link } from 'react-router-dom'
 import {
-  Target, Eye, Star, Building2, BadgeCheck,
+  Building2, BadgeCheck,
   Wheat, FlaskConical, CheckCircle, Leaf,
-  Users, UserCog, TrendingUp, ShieldCheck,
+  Users,
 } from 'lucide-react'
 
 // ─────────────────────────────────────────────────────────────
