@@ -5,7 +5,7 @@ import { motion, AnimatePresence } from 'framer-motion'
 import { HiSearch, HiX, HiChevronDown, HiCheck } from 'react-icons/hi'
 import { useProducts } from '../../hooks'
 import { Send } from 'lucide-react'
-import { CATEGORIES, CATEGORY_COLORS } from '../../data/products'
+import { CATEGORIES} from '../../data/products'
 
 /* ── Category config ──────────────────────────────────── */
 const CATEGORY_META = {
