@@ -129,6 +129,79 @@ const SLIDES = [
 ]
 
 // ═══════════════════════════════════════════════════════════
+//  CROP DECORATIONS — per-slide edge PNG images
+//
+//  Drop your transparent PNGs into /public/images/crops/
+//  e.g.  /public/images/crops/cotton.png
+//        /public/images/crops/rice.png  etc.
+//
+//  Each slide shows its own crop images at left / right edges.
+//  Opacity is intentionally low (0.18–0.28) so they feel like
+//  a background texture, not foreground elements.
+// ═══════════════════════════════════════════════════════════
+
+// Map each slide id → crop images positioned around the hero
+const SLIDE_CROP_DECOR = {
+  1: [
+    // left edge
+    { src: '/images/crops/cotton.png',  top: '10%', left: '0%',   width: 120, rot: -10, opacity: 0.22, side: 'left'  },
+    { src: '/images/crops/rice.png',    top: '55%', left: '1%',   width: 100, rot:   8, opacity: 0.18, side: 'left'  },
+    // right edge (behind product card area — very subtle)
+    { src: '/images/crops/wheat.png',   top: '8%',  right: '0%',  width: 110, rot:  12, opacity: 0.15, side: 'right' },
+    { src: '/images/crops/soybean.png', top: '62%', right: '1%',  width: 95,  rot:  -8, opacity: 0.18, side: 'right' },
+  ],
+  2: [
+    { src: '/images/crops/vegetables.png', top: '8%',  left: '0%',  width: 130, rot: -12, opacity: 0.20, side: 'left'  },
+    { src: '/images/crops/fruits.png',     top: '58%', left: '1%',  width: 105, rot:   6, opacity: 0.18, side: 'left'  },
+    { src: '/images/crops/pulses.png',     top: '6%',  right: '0%', width: 115, rot:  10, opacity: 0.15, side: 'right' },
+    { src: '/images/crops/maize.png',      top: '60%', right: '1%', width: 100, rot:  -6, opacity: 0.16, side: 'right' },
+  ],
+  3: [
+    { src: '/images/crops/tomato.png',  top: '12%', left: '0%',  width: 110, rot: -14, opacity: 0.24, side: 'left'  },
+    { src: '/images/crops/potato.png',  top: '58%', left: '1%',  width: 100, rot:   9, opacity: 0.20, side: 'left'  },
+    { src: '/images/crops/grapes.png',  top: '8%',  right: '0%', width: 120, rot:  12, opacity: 0.16, side: 'right' },
+    { src: '/images/crops/onion.png',   top: '60%', right: '1%', width: 95,  rot:  -9, opacity: 0.18, side: 'right' },
+  ],
+}
+
+function CropDecorations({ slide }) {
+  const items = SLIDE_CROP_DECOR[slide.id] || []
+  return (
+    <>
+      {items.map((item, i) => (
+        <motion.img
+          key={`${slide.id}-${i}`}
+          src={item.src}
+          alt=""
+          aria-hidden="true"
+          draggable={false}
+          initial={{ opacity: 0, scale: 0.82, x: item.side === 'left' ? -30 : 30 }}
+          animate={{ opacity: item.opacity, scale: 1, x: 0 }}
+          transition={{ duration: 0.9, delay: 0.15 + i * 0.1, ease: [0.22, 1, 0.36, 1] }}
+          style={{
+            position:      'absolute',
+            top:           item.top,
+            left:          item.left  || 'auto',
+            right:         item.right || 'auto',
+            width:         item.width,
+            transform:     `rotate(${item.rot}deg)`,
+            pointerEvents: 'none',
+            userSelect:    'none',
+            zIndex:        4,
+            filter:        `drop-shadow(0 8px 24px rgba(0,0,0,0.55))
+                            drop-shadow(0 0 12px ${slide.accent}22)`,
+            // On mobile hide them so they don't clutter small screens
+          }}
+          className="hidden md:block"
+          // Fallback: if PNG missing, img simply won't render (no broken icon shown)
+          onError={e => { e.currentTarget.style.display = 'none' }}
+        />
+      ))}
+    </>
+  )
+}
+
+// ═══════════════════════════════════════════════════════════
 //  SLIDE BACKGROUND — video / image / gradient orbs
 // ═══════════════════════════════════════════════════════════
 function SlideBackground({ slide }) {
@@ -494,6 +567,11 @@ export default function HeroCarousel() {
 
       {/* Layer 2 — grid texture */}
       <div className="absolute inset-0 pointer-events-none" style={{ ...GRID_STYLE, zIndex: 3 }} />
+
+      {/* Layer 2.5 — crop / vegetable PNG decorations (left & right edges only) */}
+      <AnimatePresence mode="wait">
+        <CropDecorations key={`crops-${slide.id}`} slide={slide} />
+      </AnimatePresence>
 
       {/* Layer 3 — decorative SVG arcs */}
       <svg className="absolute inset-0 w-full h-full pointer-events-none"

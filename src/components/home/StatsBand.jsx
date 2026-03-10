@@ -44,7 +44,7 @@ export default function StatsBand() {
     <div
       aria-label="Company statistics"
       className="relative overflow-hidden"
-      style={{ background: '#0b1c0d' }}
+      style={{ background: 'linear-gradient(135deg, #052e16 0%, #14532d 55%, #1a6b38 100%)', }}
     >
       {/* Diagonal texture */}
       <div

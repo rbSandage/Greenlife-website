@@ -44,15 +44,44 @@ export default function Contact() {
   return (
     <div className="pt-[70px]">
       {/* Header */}
-      <div className="bg-dark py-20 relative overflow-hidden">
-        <div className="absolute inset-0 opacity-25" style={{backgroundImage:'linear-gradient(rgba(82,199,134,.04) 1px,transparent 1px),linear-gradient(90deg,rgba(82,199,134,.04) 1px,transparent 1px)',backgroundSize:'48px 48px'}} />
+      <div style={{
+        background: 'linear-gradient(135deg, #052e16 0%, #14532d 50%, #1a6b38 100%)',
+        padding: '52px 0 56px', position: 'relative', overflow: 'hidden',
+      }}>
+        {/* Dot pattern */}
+        <div className="absolute inset-0" style={{
+          backgroundImage: 'radial-gradient(circle, rgba(134,239,172,0.12) 1px, transparent 1px)',
+          backgroundSize: '28px 28px',
+          opacity: 0.7,
+        }} />
+        {/* Centre glow */}
+        <div className="absolute inset-0" style={{
+          background: 'radial-gradient(ellipse 60% 70% at 50% 50%, rgba(74,222,128,0.07) 0%, transparent 70%)',
+        }} />
+
         <div className="max-w-6xl mx-auto px-[6%] relative z-10 text-center">
-          <motion.div initial={{opacity:0,y:18}} animate={{opacity:1,y:0}} transition={{duration:.6}}>
-            <div className="inline-flex items-center gap-2 bg-green-400/12 border border-green-400/25 text-green-400 text-xs font-bold tracking-widest uppercase px-4 py-1.5 rounded-full mb-5">
+          <motion.div initial={{opacity:0,y:18}} animate={{opacity:1,y:0}} transition={{duration:.6}}
+            style={{ display:'flex', flexDirection:'column', alignItems:'center' }}>
+
+            <span style={{
+              display: 'inline-flex', alignItems: 'center', gap: 8,
+              background: 'rgba(74,222,128,0.1)', border: '1px solid rgba(74,222,128,0.2)',
+              color: '#86efac', fontSize: 10, fontWeight: 700,
+              letterSpacing: '0.16em', textTransform: 'uppercase',
+              padding: '6px 16px', borderRadius: 999, marginBottom: 20,
+            }}>
               Get In Touch
-            </div>
-            <h1 className="font-display font-black text-white text-4xl md:text-5xl leading-tight mb-4">Contact Our<br/>Agri Experts</h1>
-            <p className="text-white/55 text-base max-w-lg mx-auto">Send an enquiry, request a quote, or ask our agronomists about the right product for your crop.</p>
+            </span>
+
+            <h1 className="font-display font-black text-white leading-tight mb-4"
+              style={{ fontSize: 'clamp(1.8rem, 3.5vw, 2.6rem)' }}>
+              Contact Our<br/>Agri Experts
+            </h1>
+
+            <p style={{ color: 'rgba(255,255,255,0.5)', fontSize: 13, lineHeight: 1.7, maxWidth: 440 }}>
+              Send an enquiry, request a quote, or ask our agronomists about the right product for your crop.
+            </p>
+
           </motion.div>
         </div>
       </div>
