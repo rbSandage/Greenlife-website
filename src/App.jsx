@@ -68,6 +68,53 @@ function PublicApp() {
         <Route path="/contact"               element={<Contact />} />
         <Route path="*"                      element={<NotFound />} />
       </Routes>
+<>
+<a
+  href="https://wa.me/918600707575"
+  target="_blank"
+  rel="noopener noreferrer"
+  style={{
+    position: "fixed",
+    bottom: "20px",
+    right: "20px",
+    width: "56px",
+    height: "56px",
+    backgroundColor: "#25D366",
+    borderRadius: "50%",
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+    boxShadow: "0 6px 16px rgba(0,0,0,0.25)",
+    zIndex: 9999,
+    animation: "waPulse 2s infinite",
+    transition: "transform 0.3s"
+  }}
+  onMouseEnter={(e)=> e.currentTarget.style.transform="scale(1.1)"}
+  onMouseLeave={(e)=> e.currentTarget.style.transform="scale(1)"}
+>
+  <img
+    src="https://cdn.jsdelivr.net/gh/simple-icons/simple-icons/icons/whatsapp.svg"
+    alt="WhatsApp"
+    style={{ width: "28px", filter: "invert(1)" }}
+  />
+</a>
+
+<style>
+{`
+@keyframes waPulse {
+  0% {
+    box-shadow: 0 0 0 0 rgba(37,211,102,0.7);
+  }
+  70% {
+    box-shadow: 0 0 0 18px rgba(37,211,102,0);
+  }
+  100% {
+    box-shadow: 0 0 0 0 rgba(37,211,102,0);
+  }
+}
+`}
+</style>
+</>
       <Footer />
     </>
   )

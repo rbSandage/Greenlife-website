@@ -7,6 +7,7 @@ import { doc, getDoc } from 'firebase/firestore'
 import { HiArrowLeft, HiPhone, HiMail } from 'react-icons/hi'
 import { db } from '../../firebase/config'
 import { CATEGORY_COLORS } from '../../data/products'
+import {Send } from 'lucide-react'
 
 export default function ProductDetail() {
   const { id } = useParams()
@@ -59,15 +60,35 @@ export default function ProductDetail() {
           {/* Left — Image */}
           <motion.div initial={{opacity:0,x:-20}} animate={{opacity:1,x:0}} transition={{duration:.6}}>
             <div className="rounded-3xl overflow-hidden h-96 flex items-center justify-center text-8xl relative"
-              style={{ background: product.imageUrl ? `url(${product.imageUrl}) center/cover` : 'linear-gradient(135deg,#e8f5e9,#c8e6c9)' }}>
-              {!product.imageUrl && '🌿'}
-              {product.featured && <div className="absolute top-4 left-4 bg-amber-500 text-white text-xs font-bold px-3 py-1.5 rounded-full">⭐ Featured Product</div>}
+              style={{
+                background: product.imageUrl ? '#f3f8d3' : 'linear-gradient(135deg,#e8f5e9,#c8e6c9)',
+                border: '1.5px solid #e5e7eb',
+                boxShadow: '0 4px 24px rgba(0,0,0,0.08)',
+              }}>
+              {product.imageUrl
+                ? <img src={product.imageUrl} alt={product.name} style={{ width: '100%', height: '100%', objectFit: 'contain', padding: '16px' }} />
+                : '🌿'
+              }
+              {product.featured && <div className="absolute top-4 left-4 bg-green-600 text-white text-xs font-bold px-3 py-1.5 rounded-full">⭐ Featured Product</div>}
             </div>
 
             {/* Safety info card */}
-            <div className="mt-5 bg-amber-50 border border-amber-200 rounded-2xl p-5">
-              <h4 className="font-heading font-bold text-amber-800 text-sm mb-2">⚠️ Safety Information</h4>
-              <p className="text-xs text-amber-700 leading-relaxed">{product.safetyInfo || 'Use as directed. Keep away from children. Wear protective gear during application.'}</p>
+            <div className="mt-5 rounded-2xl overflow-hidden"
+              style={{ border: '1px solid #e5e7eb', boxShadow: '0 2px 8px rgba(0,0,0,0.05)' }}>
+              {/* Header strip */}
+              <div style={{ background: 'linear-gradient(135deg,#052e16,#14532d)', padding: '12px 18px',
+                display: 'flex', alignItems: 'center', gap: 8 }}>
+                <span style={{ fontSize: 16 }}>  <img src="/images/icons/safety.png" alt="PDF" style={{ width: 40, height: 40, objectFit: 'contain' }} /></span>
+                <span style={{ color: '#bbf7d0', fontWeight: 700, fontSize: 13, letterSpacing: '0.04em' }}>
+                  Safety Information
+                </span>
+              </div>
+              {/* Body */}
+              <div style={{ background: '#fff', padding: '14px 18px' }}>
+                <p style={{ fontSize: 12, color: '#374151', lineHeight: 1.75, margin: 0 }}>
+                  {product.safetyInfo || 'Use as directed. Keep away from children. Wear protective gear during application.'}
+                </p>
+              </div>
             </div>
           </motion.div>
 
@@ -130,7 +151,8 @@ export default function ProductDetail() {
             {/* CTAs */}
             <div className="flex gap-3 flex-wrap">
               <Link to={`/contact?product=${encodeURIComponent(product.name)}`} className="btn-primary flex-1 md:flex-none justify-center">
-                📋 Enquire About This Product
+                <Send/>
+                 Enquirey
               </Link>
               <a href="tel:+919876543210" className="inline-flex items-center gap-2 bg-white border border-green-200 text-green-700 px-5 py-3.5 rounded-full text-sm font-semibold hover:bg-green-50 transition-all">
                 <HiPhone /> Call Now
