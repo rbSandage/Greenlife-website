@@ -56,8 +56,8 @@ export default function ProductViewer() {
     </div>
   )
 
-  const isImage = /\.(png|jpg|jpeg|webp)(\?|$)/i.test(product.pdfUrl)
-  const isPdf   = !isImage
+  const isImage  = /\.(png|jpg|jpeg|webp)(\?|$)/i.test(product.pdfUrl)
+  const isPdf    = !isImage
 
   return (
     <div style={{ minHeight: '100vh', background: '#f5f6f8', paddingTop: 70 }}>
@@ -108,14 +108,14 @@ export default function ProductViewer() {
       </div>
 
       {/* ── Viewer ── */}
-      <div className="max-w-5xl mx-auto px-[6%]" style={{ padding: '24px 6% 48px' }}>
+      <div className="max-w-2xl mx-auto px-[6%]" style={{ padding: '32px 6% 64px' }}>
         <motion.div
           initial={{ opacity: 0, y: 14 }} animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.4 }}
-          style={{ background: '#fff', borderRadius: 20, border: '1px solid #e5e7eb',
-            boxShadow: '0 2px 16px rgba(0,0,0,0.07)', overflow: 'hidden' }}
+          style={{ background: '#fff', borderRadius: 24, border: '1px solid #e5e7eb',
+            boxShadow: '0 4px 24px rgba(0,0,0,0.08)', overflow: 'hidden' }}
         >
-          {/* Image — shown directly */}
+          {/* Image — show directly */}
           {isImage && (
             <div style={{ padding: 24 }}>
               <img
@@ -126,25 +126,72 @@ export default function ProductViewer() {
             </div>
           )}
 
-          {/* PDF — native browser viewer via <object> tag, no Google, no email */}
+          {/* PDF — open natively, works on all devices */}
           {isPdf && (
-            <object
-              data={product.pdfUrl}
-              type="application/pdf"
-              style={{ width: '100%', height: '80vh', display: 'block', border: 'none' }}
-            >
-              {/* Fallback for browsers that can't render PDF inline */}
-              <div style={{ padding: 48, textAlign: 'center' }}>
-                <div style={{ fontSize: 48, marginBottom: 12 }}>📄</div>
-                <p style={{ color: '#6b7280', fontSize: 14, marginBottom: 20 }}>
-                  Your browser can't preview this PDF.
-                </p>
-                <a href={product.pdfUrl} download target="_blank" rel="noopener noreferrer"
-                  className="btn-primary no-underline inline-flex items-center gap-2">
-                  <HiDownload /> Download PDF
+            <div style={{ padding: '52px 32px 48px', textAlign: 'center' }}>
+
+              {/* Icon */}
+              <div style={{
+                width: 80, height: 80, borderRadius: 20, margin: '0 auto 20px',
+                background: 'linear-gradient(135deg,#052e16,#14532d)',
+                display: 'flex', alignItems: 'center', justifyContent: 'center',
+                boxShadow: '0 8px 24px rgba(5,46,22,0.25)',
+                fontSize: 36,
+              }}>
+                📄
+              </div>
+
+              {/* Product name */}
+              <div style={{ fontWeight: 800, fontSize: 18, color: '#111827', marginBottom: 6 }}>
+                {product.name}
+              </div>
+              <div style={{ fontSize: 12, color: '#9ca3af', marginBottom: 6 }}>
+                {product.category}
+              </div>
+              <div style={{ fontSize: 13, color: '#6b7280', marginBottom: 32 }}>
+                {product.pdfName || 'Product Brochure / Label'}
+              </div>
+
+              {/* Open button */}
+              <a
+                href={product.pdfUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                style={{
+                  display: 'inline-flex', alignItems: 'center', gap: 10,
+                  background: 'linear-gradient(135deg,#052e16,#1a6b38)',
+                  color: '#fff', fontWeight: 700, fontSize: 16,
+                  padding: '16px 40px', borderRadius: 999,
+                  textDecoration: 'none',
+                  boxShadow: '0 6px 20px rgba(5,46,22,0.35)',
+                  marginBottom: 16,
+                }}
+              >
+                📂 Open PDF
+              </a>
+
+              <div>
+                <a
+                  href={product.pdfUrl}
+                  download
+                  style={{
+                    color: '#16a34a', fontSize: 13, fontWeight: 600,
+                    textDecoration: 'none', display: 'inline-flex',
+                    alignItems: 'center', gap: 5,
+                  }}
+                >
+                  ⬇ Download PDF
                 </a>
               </div>
-            </object>
+
+              <div style={{
+                marginTop: 32, padding: '12px 16px', borderRadius: 12,
+                background: '#f0fdf4', border: '1px solid #bbf7d0',
+                fontSize: 11, color: '#16a34a', fontWeight: 600,
+              }}>
+                ✅ Government Approved — CIB Registered
+              </div>
+            </div>
           )}
         </motion.div>
 

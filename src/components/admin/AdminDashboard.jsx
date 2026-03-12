@@ -33,7 +33,7 @@ function ProductForm({ initial = EMPTY, onSave, onCancel, uploading, progress, u
       // QR uses domain URL if editing existing product, else direct URL (re-download after save)
       const productId = initial?.id
       const pageUrl = productId
-        ? `${process.env.REACT_APP_SITE_URL}/products/${productId}`
+        ? `${process.env.REACT_APP_SITE_URL}/products/${productId}/brochure`
         : url
       const qr = await QRCode.toDataURL(pageUrl, {
         width: 300, margin: 2,
@@ -193,7 +193,7 @@ function ProductForm({ initial = EMPTY, onSave, onCancel, uploading, progress, u
             onClick={async () => {
               const productId = initial?.id
               const pageUrl = productId
-                ? `${process.env.REACT_APP_SITE_URL}/products/${productId}`
+                ? `${process.env.REACT_APP_SITE_URL}/products/${productId}/brochure`
                 : pdfUrl
               const qr = await QRCode.toDataURL(pageUrl, { width: 300, margin: 2, color: { dark: '#052e16', light: '#ffffff' } })
               setQrDataUrl(qr)
@@ -267,7 +267,7 @@ export default function AdminDashboard() {
         toast.success('Product added!')
         // Auto-download QR if PDF was attached
         if (data.pdfUrl && newId) {
-          const pageUrl = `${process.env.REACT_APP_SITE_URL}/products/${newId}`
+          const pageUrl = `${process.env.REACT_APP_SITE_URL}/products/${newId}/brochure`
           const qr = await QRCode.toDataURL(pageUrl, { width: 300, margin: 2, color: { dark: '#052e16', light: '#ffffff' } })
           const a = document.createElement('a')
           a.href = qr
@@ -415,7 +415,7 @@ export default function AdminDashboard() {
                                 {p.pdfUrl && (
                                   <button title="Download QR Code" className="p-2 rounded-lg text-gray-400 hover:text-purple-600 hover:bg-purple-50 transition-all"
                                     onClick={async () => {
-                                      const pageUrl = `${process.env.REACT_APP_SITE_URL}/products/${p.id}`
+                                      const pageUrl = `${process.env.REACT_APP_SITE_URL}/products/${p.id}/brochure`
                                       const qr = await QRCode.toDataURL(pageUrl, { width: 300, margin: 2, color: { dark: '#052e16', light: '#ffffff' } })
                                       const a  = document.createElement('a')
                                       a.href = qr
