@@ -108,6 +108,25 @@ export default function ProductDetail() {
               <span className="text-xs font-semibold text-green-700">Government Approved Product — CIB Registered</span>
             </div>
 
+            {/* PDF Brochure link — only shows if attached */}
+            {product.pdfUrl && (
+              <Link
+                to={`/products/${product.id}/brochure`}
+                className="inline-flex items-center gap-2 no-underline mt-2 mb-7 px-4 py-2.5 rounded-xl transition-all hover:-translate-y-0.5"
+                style={{
+                  background: '#fef2f2',
+                  border: '1.5px solid #fecaca',
+                  color: '#d15353',
+                  fontSize: 13,
+                  fontWeight: 700,
+                  display: 'inline-flex',
+                }}
+              >
+             <img src="/images/icons/pdf.png" alt="PDF" style={{ width: 24, height: 24, objectFit: 'contain' }} />
+               View Product Brochure / Label
+              </Link>
+            )}
+
             {/* CTAs */}
             <div className="flex gap-3 flex-wrap">
               <Link to={`/contact?product=${encodeURIComponent(product.name)}`} className="btn-primary flex-1 md:flex-none justify-center">
@@ -119,6 +138,7 @@ export default function ProductDetail() {
             </div>
           </motion.div>
         </div>
+
       </div>
     </div>
   )

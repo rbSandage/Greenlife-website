@@ -208,12 +208,29 @@ function ProductCard({ product, index }) {
             <span className="text-[0.63rem] text-gray-400 truncate mr-2 max-w-[95px]">
               {product.activeIngredient}
             </span>
-            <span
-              className="text-[0.63rem] font-bold px-2.5 py-1 rounded-full flex-shrink-0"
-              style={{ background: meta.light, color: meta.color }}
-            >
-              Details →
-            </span>
+            <div className="flex items-center gap-1.5 flex-shrink-0">
+              {/* PDF icon — only shows if PDF attached */}
+              {product.pdfUrl && (
+                <Link
+                 to={`/products/${product.id}/brochure`}
+                  onClick={e => e.stopPropagation()}
+                  title="View Product PDF"
+                  className="no-underline flex items-center justify-center"
+                  style={{
+                    width: 24, height: 24, borderRadius: 6,
+                    background: '#fef2f2', border: '1px solid #fecaca',
+                  }}
+                >
+                  <img src="/images/icons/pdf.png" alt="PDF" style={{ width: 20, height: 20, objectFit: 'contain' }} />
+                </Link>
+              )}
+              <span
+                className="text-[0.63rem] font-bold px-2.5 py-1 rounded-full"
+                style={{ background: meta.light, color: meta.color }}
+              >
+                Details →
+              </span>
+            </div>
           </div>
         </div>
       </Link>

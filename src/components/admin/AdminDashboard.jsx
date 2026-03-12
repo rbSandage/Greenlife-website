@@ -4,15 +4,56 @@ import { motion, AnimatePresence } from 'framer-motion'
 import toast from 'react-hot-toast'
 import { useAuth, useProducts, useProductCRUD, useEnquiries } from '../../hooks'
 import { CATEGORIES, CATEGORY_COLORS } from '../../data/products'
-import { HiLogout, HiPlus, HiPencil, HiTrash, HiStar, HiEye, HiEyeOff, HiMail, HiMailOpen, HiX, HiMenu } from 'react-icons/hi'
+import { HiLogout, HiPlus, HiPencil, HiTrash, HiStar, HiEye, HiEyeOff, HiMail, HiMailOpen, HiX, HiMenu, HiDownload, HiDocumentText } from 'react-icons/hi'
+import QRCode from 'qrcode'
 
 /* ── ProductForm ────────────────────────────────────────── */
-const EMPTY = { name:'', category:'Insecticide', description:'', activeIngredient:'', dosage:'', formulation:'', packSizes:'', crops:'', safetyInfo:'', featured:false, active:true, imageUrl:'' }
+const EMPTY = { name:'', category:'Insecticide', description:'', activeIngredient:'', dosage:'', formulation:'', packSizes:'', crops:'', safetyInfo:'', featured:false, active:true, imageUrl:'', pdfUrl:'', pdfName:'' }
 
-function ProductForm({ initial = EMPTY, onSave, onCancel, uploading, progress }) {
+function ProductForm({ initial = EMPTY, onSave, onCancel, uploading, progress, uploadPdf }) {
   const [form, setForm] = useState({ ...EMPTY, ...initial, packSizes: Array.isArray(initial.packSizes) ? initial.packSizes.join(', ') : initial.packSizes || '', crops: Array.isArray(initial.crops) ? initial.crops.join(', ') : initial.crops || '' })
   const [imageFile, setImageFile] = useState(null)
-  const [preview, setPreview] = useState(initial.imageUrl || '')
+  const [preview, setPreview]     = useState(initial.imageUrl || '')
+  const [pdfFile, setPdfFile]         = useState(null)
+  const [pdfUploading, setPdfUploading] = useState(false)
+  const [pdfUrl, setPdfUrl]           = useState(initial.pdfUrl || '')
+  const [pdfName, setPdfName]         = useState(initial.pdfName || '')
+  const [qrDataUrl, setQrDataUrl]     = useState('')
+
+  const handlePdf = async e => {
+    const f = e.target.files[0]
+    if (!f) return
+    if (f.size > 20 * 1024 * 1024) { toast.error('File must be under 20MB'); return }
+    setPdfFile(f)
+    setPdfUploading(true)
+    try {
+      const url = await uploadPdf(f)
+      setPdfUrl(url)
+      setPdfName(f.name)
+      // QR uses domain URL if editing existing product, else direct URL (re-download after save)
+      const productId = initial?.id
+      const pageUrl = productId
+        ? `${process.env.REACT_APP_SITE_URL}/products/${productId}`
+        : url
+      const qr = await QRCode.toDataURL(pageUrl, {
+        width: 300, margin: 2,
+        color: { dark: '#052e16', light: '#ffffff' },
+      })
+      setQrDataUrl(qr)
+      toast.success(productId
+        ? 'File uploaded — QR ready!'
+        : 'File uploaded! Save product then use 🔲 in table to get final QR.')
+    } catch (err) {
+      toast.error('Upload failed: ' + err.message)
+    } finally { setPdfUploading(false) }
+  }
+
+  const downloadQR = () => {
+    const a = document.createElement('a')
+    a.href = qrDataUrl
+    a.download = `${form.name || 'product'}-QR.png`
+    a.click()
+  }
 
   const handle = e => {
     const { name, value, type, checked } = e.target
@@ -30,7 +71,7 @@ function ProductForm({ initial = EMPTY, onSave, onCancel, uploading, progress })
   const submit = e => {
     e.preventDefault()
     if (!form.name || !form.category) { toast.error('Name and category are required'); return }
-    const data = { ...form, packSizes: form.packSizes.split(',').map(s => s.trim()).filter(Boolean), crops: form.crops.split(',').map(s => s.trim()).filter(Boolean) }
+    const data = { ...form, packSizes: form.packSizes.split(',').map(s => s.trim()).filter(Boolean), crops: form.crops.split(',').map(s => s.trim()).filter(Boolean), pdfUrl, pdfName }
     onSave(data, imageFile)
   }
 
@@ -103,6 +144,66 @@ function ProductForm({ initial = EMPTY, onSave, onCancel, uploading, progress })
         {uploading && <div className="mt-2 h-1.5 bg-gray-100 rounded-full overflow-hidden"><div className="h-full bg-green-500 transition-all" style={{width:`${progress}%`}} /></div>}
       </div>
 
+      {/* ── PDF Brochure + QR Code ── */}
+      <div>
+        <label className={label}>Product PDF or Image (brochure / label)</label>
+        <label className="flex-1 flex flex-col items-center justify-center h-20 border-2 border-dashed border-gray-200 rounded-xl cursor-pointer hover:border-green-400 hover:bg-green-50 transition-all">
+          <input type="file" accept=".pdf,image/*" onChange={handlePdf} className="hidden" />
+          <span className="text-xl mb-0.5">📄</span>
+          <span className="text-xs text-gray-400">
+            {pdfUploading ? 'Uploading...' : pdfFile ? pdfFile.name : pdfName ? pdfName : 'Click to upload PDF or Image'}
+          </span>
+        </label>
+
+        {/* Existing PDF link */}
+        {pdfUrl && !pdfUploading && (
+          <a href={pdfUrl} target="_blank" rel="noopener noreferrer"
+            className="flex items-center gap-1.5 text-xs text-green-600 mt-2 no-underline hover:underline">
+            <HiDocumentText /> {pdfName || 'View attached PDF'}
+          </a>
+        )}
+
+        {/* Upload progress */}
+        {pdfUploading && (
+          <div className="mt-2 h-1.5 bg-gray-100 rounded-full overflow-hidden">
+            <div className="h-full bg-green-500 animate-pulse w-full" />
+          </div>
+        )}
+
+        {/* QR Code preview + download */}
+        {qrDataUrl && (
+          <div className="mt-4 flex items-center gap-5 p-4 bg-gray-50 rounded-2xl border border-gray-200">
+            <img src={qrDataUrl} alt="QR Code" className="rounded-lg border border-gray-200" style={{ width: 90, height: 90 }} />
+            <div>
+              <p className="text-xs font-bold text-gray-700 mb-0.5">QR Code Ready ✓</p>
+              <p className="text-xs text-gray-400 leading-relaxed mb-3">
+                Scan opens PDF directly on phone.<br />Print &amp; stick on bottle label.
+              </p>
+              <button type="button" onClick={downloadQR}
+                className="inline-flex items-center gap-1.5 text-xs px-4 py-2 bg-green-600 text-white rounded-lg font-bold hover:bg-green-500 transition-colors">
+                <HiDownload /> Download QR PNG
+              </button>
+            </div>
+          </div>
+        )}
+
+        {/* Show existing QR if product already has PDF */}
+        {!qrDataUrl && pdfUrl && (
+          <button type="button"
+            onClick={async () => {
+              const productId = initial?.id
+              const pageUrl = productId
+                ? `${process.env.REACT_APP_SITE_URL}/products/${productId}`
+                : pdfUrl
+              const qr = await QRCode.toDataURL(pageUrl, { width: 300, margin: 2, color: { dark: '#052e16', light: '#ffffff' } })
+              setQrDataUrl(qr)
+            }}
+            className="mt-3 inline-flex items-center gap-1.5 text-xs px-4 py-2 border border-green-300 text-green-700 rounded-lg font-bold hover:bg-green-50 transition-colors">
+            🔲 Regenerate QR Code
+          </button>
+        )}
+      </div>
+
       <div className="flex gap-6 pt-2">
         <label className="flex items-center gap-2 cursor-pointer">
           <input type="checkbox" name="featured" checked={form.featured} onChange={handle} className="w-4 h-4 accent-green-600 rounded" />
@@ -148,7 +249,7 @@ export default function AdminDashboard() {
   const { logout } = useAuth()
   const { products, loading: pLoad } = useProducts(false)
   const { enquiries, loading: eLoad, markRead, deleteEnquiry } = useEnquiries()
-  const { addProduct, updateProduct, deleteProduct, toggleField, uploading, progress } = useProductCRUD()
+  const { addProduct, updateProduct, deleteProduct, toggleField, uploadPdf, uploading, progress } = useProductCRUD()
 
   const [tab,     setTab]     = useState('products')
   const [modal,   setModal]   = useState(null) // 'add' | 'edit' | 'enquiry'
@@ -162,8 +263,17 @@ export default function AdminDashboard() {
         await updateProduct(editing.id, data, file)
         toast.success('Product updated!')
       } else {
-        await addProduct(data, file)
+        const newId = await addProduct(data, file)
         toast.success('Product added!')
+        // Auto-download QR if PDF was attached
+        if (data.pdfUrl && newId) {
+          const pageUrl = `${process.env.REACT_APP_SITE_URL}/products/${newId}`
+          const qr = await QRCode.toDataURL(pageUrl, { width: 300, margin: 2, color: { dark: '#052e16', light: '#ffffff' } })
+          const a = document.createElement('a')
+          a.href = qr
+          a.download = `${data.name}-QR.png`
+          a.click()
+        }
       }
       setModal(null); setEditing(null)
     } catch (e) { toast.error(e.message) }
@@ -302,6 +412,19 @@ export default function AdminDashboard() {
                                 <button onClick={() => toggleField(p.id, 'featured', !p.featured)} title="Toggle featured" className={`p-2 rounded-lg transition-all ${p.featured ? 'text-amber-500 bg-amber-50 hover:bg-amber-100' : 'text-gray-300 hover:text-amber-400 hover:bg-amber-50'}`}><HiStar /></button>
                                 <button onClick={() => toggleField(p.id, 'active', !p.active)} title="Toggle visibility" className={`p-2 rounded-lg transition-all ${p.active ? 'text-blue-500 bg-blue-50 hover:bg-blue-100' : 'text-gray-300 hover:text-blue-400 hover:bg-blue-50'}`}>{p.active ? <HiEye /> : <HiEyeOff />}</button>
                                 <button onClick={() => { setEditing(p); setModal('edit') }} title="Edit" className="p-2 rounded-lg text-gray-400 hover:text-green-600 hover:bg-green-50 transition-all"><HiPencil /></button>
+                                {p.pdfUrl && (
+                                  <button title="Download QR Code" className="p-2 rounded-lg text-gray-400 hover:text-purple-600 hover:bg-purple-50 transition-all"
+                                    onClick={async () => {
+                                      const pageUrl = `${process.env.REACT_APP_SITE_URL}/products/${p.id}`
+                                      const qr = await QRCode.toDataURL(pageUrl, { width: 300, margin: 2, color: { dark: '#052e16', light: '#ffffff' } })
+                                      const a  = document.createElement('a')
+                                      a.href = qr
+                                      a.download = `${p.name}-QR.png`
+                                      a.click()
+                                    }}>
+                                    🔲
+                                  </button>
+                                )}
                                 <button onClick={() => handleDelete(p)} title="Delete" className="p-2 rounded-lg text-gray-400 hover:text-red-500 hover:bg-red-50 transition-all"><HiTrash /></button>
                               </div>
                             </td>
@@ -357,7 +480,7 @@ export default function AdminDashboard() {
       {/* Modals */}
       {(modal === 'add' || modal === 'edit') && (
         <Modal title={modal === 'edit' ? `Edit — ${editing?.name}` : 'Add New Product'} onClose={() => { setModal(null); setEditing(null) }}>
-          <ProductForm initial={editing || EMPTY} onSave={handleSave} onCancel={() => { setModal(null); setEditing(null) }} uploading={uploading} progress={progress} />
+          <ProductForm initial={editing || EMPTY} onSave={handleSave} onCancel={() => { setModal(null); setEditing(null) }} uploading={uploading} progress={progress} uploadPdf={uploadPdf} />
         </Modal>
       )}
 

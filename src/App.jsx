@@ -1,22 +1,21 @@
 /*eslint-disable*/
 // src/App.jsx
-import { BrowserRouter, Routes, Route, useLocation } from 'react-router-dom'
+import { BrowserRouter, Routes, Route } from 'react-router-dom'
 import { Toaster } from 'react-hot-toast'
 import { useAuth } from './hooks'
 
 import Navbar  from './components/layout/Navbar'
 import Footer  from './components/layout/Footer'
 
-import Home          from './components/pages/Home'
-import Products      from './components/pages/Products'
-import ProductDetail from './components/pages/ProductDetail'
-import About         from './components/pages/About'
-import Contact       from './components/pages/Contact'
+import Home           from './components/pages/Home'
+import Products       from './components/pages/Products'
+import ProductDetail  from './components/pages/ProductDetail'
+import ProductViewer  from './components/pages/ProductViewer'
+import About          from './components/pages/About'
+import Contact        from './components/pages/Contact'
 import AdminLogin     from './components/admin/AdminLogin'
 import AdminDashboard from './components/admin/AdminDashboard'
 import ProtectedRoute from './components/admin/ProtectedRoute'
-
-
 
 function NotFound() {
   return (
@@ -42,11 +41,8 @@ export default function App() {
         }}
       />
       <Routes>
-        {/* Admin routes — no navbar/footer */}
         <Route path="/admin"       element={<ProtectedRoute><AdminDashboard /></ProtectedRoute>} />
         <Route path="/admin/login" element={<AdminLoginRedirect />} />
-
-        {/* Public routes — with navbar/footer */}
         <Route path="*" element={<PublicApp />} />
       </Routes>
     </BrowserRouter>
@@ -64,12 +60,13 @@ function PublicApp() {
     <>
       <Navbar />
       <Routes>
-        <Route path="/"             element={<Home />} />
-        <Route path="/products"     element={<Products />} />
-        <Route path="/products/:id" element={<ProductDetail />} />
-        <Route path="/about"        element={<About />} />
-        <Route path="/contact"      element={<Contact />} />
-        <Route path="*"             element={<NotFound />} />
+        <Route path="/"                      element={<Home />} />
+        <Route path="/products"              element={<Products />} />
+        <Route path="/products/:id"          element={<ProductDetail />} />
+        <Route path="/products/:id/brochure" element={<ProductViewer />} />
+        <Route path="/about"                 element={<About />} />
+        <Route path="/contact"               element={<Contact />} />
+        <Route path="*"                      element={<NotFound />} />
       </Routes>
       <Footer />
     </>

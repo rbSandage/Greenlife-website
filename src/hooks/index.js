@@ -81,6 +81,27 @@ export function useProductCRUD() {
     }
   }, [])
 
+  // Upload PDF to Cloudinary (raw upload)
+  const uploadPdf = useCallback(async (file) => {
+    if (!file) return null
+
+    const cloudName   = process.env.REACT_APP_CLOUDINARY_CLOUD_NAME
+    const uploadPreset = process.env.REACT_APP_CLOUDINARY_UPLOAD_PRESET
+
+    const formData = new FormData()
+    formData.append('file', file)
+    formData.append('upload_preset', uploadPreset)
+
+    const res = await fetch(
+      `https://api.cloudinary.com/v1_1/${cloudName}/raw/upload`,  // ← raw not image
+      { method: 'POST', body: formData }
+    )
+
+    const data = await res.json()
+    if (data.error) throw new Error(data.error.message)
+    return data.secure_url
+  }, [])
+
   const addProduct = useCallback(async (data, imageFile) => {
     let imageUrl = ""
 
@@ -121,7 +142,7 @@ export function useProductCRUD() {
     await updateDoc(doc(db, 'products', id), { [field]: value })
   }, [])
 
-  return { addProduct, updateProduct, deleteProduct, toggleField, uploading, progress }
+  return { addProduct, updateProduct, deleteProduct, toggleField, uploadPdf, uploading, progress }
 }
 
 
