@@ -1,6 +1,6 @@
 /*eslint-disable*/
 // src/App.jsx
-import { BrowserRouter, Routes, Route } from 'react-router-dom'
+import { BrowserRouter, Routes, Route, useLocation } from 'react-router-dom'
 import { Toaster } from 'react-hot-toast'
 import { useAuth } from './hooks'
 
@@ -17,6 +17,49 @@ import AdminLogin     from './components/admin/AdminLogin'
 import AdminDashboard from './components/admin/AdminDashboard'
 import ProtectedRoute from './components/admin/ProtectedRoute'
 
+/* ── WhatsApp Floating Button ── */
+function WhatsAppButton() {
+  const location = useLocation()
+  if (location.pathname.startsWith('/admin')) return null
+
+  return (
+    <>
+      <style>{`
+        @keyframes waPulse {
+          0%   { box-shadow: 0 0 0 0 rgba(37,211,102,0.7); }
+          70%  { box-shadow: 0 0 0 18px rgba(37,211,102,0); }
+          100% { box-shadow: 0 0 0 0 rgba(37,211,102,0); }
+        }
+        .wa-btn { animation: waPulse 2.5s infinite; transition: transform 0.25s; }
+        .wa-btn:hover { transform: scale(1.1); }
+      `}</style>
+
+      <a
+        href="https://wa.me/918600707575"
+        target="_blank"
+        rel="noopener noreferrer"
+        className="wa-btn"
+        style={{
+          position: 'fixed', bottom: 24, right: 24, zIndex: 9999,
+          width: 56, height: 56, borderRadius: '50%',
+          background: '#25D366',
+          display: 'flex', alignItems: 'center', justifyContent: 'center',
+          boxShadow: '0 6px 16px rgba(0,0,0,0.2)',
+          textDecoration: 'none',
+        }}
+        title="Chat with us on WhatsApp"
+      >
+        <img
+          src="/images/icons/whatsapp.png"
+          alt="WhatsApp"
+          style={{ width: 30, height: 30, objectFit: 'contain' }}
+        />
+      </a>
+    </>
+  )
+}
+
+/* ── 404 Page ── */
 function NotFound() {
   return (
     <div className="min-h-screen flex items-center justify-center text-center px-6 pt-[70px]">
@@ -30,6 +73,7 @@ function NotFound() {
   )
 }
 
+/* ── App ── */
 export default function App() {
   return (
     <BrowserRouter>
@@ -43,7 +87,7 @@ export default function App() {
       <Routes>
         <Route path="/admin"       element={<ProtectedRoute><AdminDashboard /></ProtectedRoute>} />
         <Route path="/admin/login" element={<AdminLoginRedirect />} />
-        <Route path="*" element={<PublicApp />} />
+        <Route path="*"            element={<PublicApp />} />
       </Routes>
     </BrowserRouter>
   )
@@ -68,54 +112,8 @@ function PublicApp() {
         <Route path="/contact"               element={<Contact />} />
         <Route path="*"                      element={<NotFound />} />
       </Routes>
-<>
-<a
-  href="https://wa.me/918600707575"
-  target="_blank"
-  rel="noopener noreferrer"
-  style={{
-    position: "fixed",
-    bottom: "20px",
-    right: "20px",
-    width: "56px",
-    height: "56px",
-    backgroundColor: "#25D366",
-    borderRadius: "50%",
-    display: "flex",
-    alignItems: "center",
-    justifyContent: "center",
-    boxShadow: "0 6px 16px rgba(0,0,0,0.25)",
-    zIndex: 9999,
-    animation: "waPulse 3s infinite",
-    transition: "transform 0.3s"
-  }}
-  onMouseEnter={(e)=> e.currentTarget.style.transform="scale(1.1)"}
-  onMouseLeave={(e)=> e.currentTarget.style.transform="scale(1)"}
->
-  <img
-    src="https://cdn.jsdelivr.net/gh/simple-icons/simple-icons/icons/whatsapp.svg"
-    alt="WhatsApp"
-    style={{ width: "28px", filter: "invert(1)" }}
-  />
-</a>
-
-<style>
-{`
-@keyframes waPulse {
-  0% {
-    box-shadow: 0 0 0 0 rgba(37,211,102,0.7);
-  }
-  70% {
-    box-shadow: 0 0 0 18px rgba(37,211,102,0);
-  }
-  100% {
-    box-shadow: 0 0 0 0 rgba(37,211,102,0);
-  }
-}
-`}
-</style>
-</>
       <Footer />
+      <WhatsAppButton />
     </>
   )
 }
