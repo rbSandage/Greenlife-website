@@ -58,6 +58,7 @@ export default function ProductViewer() {
 
   const isImage  = /\.(png|jpg|jpeg|webp)(\?|$)/i.test(product.pdfUrl)
   const isPdf    = !isImage
+  const isMobile = /Android|iPhone|iPad|iPod|Mobile/i.test(navigator.userAgent)
 
   return (
     <div style={{ minHeight: '100vh', background: '#f5f6f8', paddingTop: 70 }}>
@@ -108,14 +109,14 @@ export default function ProductViewer() {
       </div>
 
       {/* ── Viewer ── */}
-      <div className="max-w-2xl mx-auto px-[6%]" style={{ padding: '32px 6% 64px' }}>
+      <div className="max-w-5xl mx-auto px-[6%]" style={{ padding: '24px 6% 48px' }}>
         <motion.div
           initial={{ opacity: 0, y: 14 }} animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.4 }}
-          style={{ background: '#fff', borderRadius: 24, border: '1px solid #e5e7eb',
-            boxShadow: '0 4px 24px rgba(0,0,0,0.08)', overflow: 'hidden' }}
+          style={{ background: '#fff', borderRadius: 20, border: '1px solid #e5e7eb',
+            boxShadow: '0 2px 16px rgba(0,0,0,0.07)', overflow: 'hidden' }}
         >
-          {/* Image — show directly */}
+          {/* Image — shown directly */}
           {isImage && (
             <div style={{ padding: 24 }}>
               <img
@@ -126,70 +127,43 @@ export default function ProductViewer() {
             </div>
           )}
 
-          {/* PDF — open natively, works on all devices */}
-          {isPdf && (
-            <div style={{ padding: '52px 32px 48px', textAlign: 'center' }}>
+          {/* PDF — iframe on desktop, open button on mobile */}
+          {isPdf && !isMobile && (
+            <iframe
+              src={product.pdfUrl}
+              style={{ width: '100%', height: '82vh', display: 'block', border: 'none' }}
+              title={product.pdfName || 'Product Brochure'}
+            />
+          )}
 
-              {/* Icon */}
-              <div style={{
-                width: 80, height: 80, borderRadius: 20, margin: '0 auto 20px',
-                background: 'linear-gradient(135deg,#052e16,#14532d)',
-                display: 'flex', alignItems: 'center', justifyContent: 'center',
-                boxShadow: '0 8px 24px rgba(5,46,22,0.25)',
-                fontSize: 36,
-              }}>
-                📄
+          {isPdf && isMobile && (
+            <div style={{ padding: '52px 24px', textAlign: 'center' }}>
+              <div style={{ fontSize: 64, marginBottom: 16 }}>📄</div>
+              <div style={{ fontWeight: 700, fontSize: 16, color: '#111827', marginBottom: 8 }}>
+                {product.pdfName || 'Product Brochure'}
               </div>
-
-              {/* Product name */}
-              <div style={{ fontWeight: 800, fontSize: 18, color: '#111827', marginBottom: 6 }}>
-                {product.name}
-              </div>
-              <div style={{ fontSize: 12, color: '#9ca3af', marginBottom: 6 }}>
-                {product.category}
-              </div>
-              <div style={{ fontSize: 13, color: '#6b7280', marginBottom: 32 }}>
-                {product.pdfName || 'Product Brochure / Label'}
-              </div>
-
-              {/* Open button */}
+              <p style={{ color: '#6b7280', fontSize: 13, marginBottom: 28, lineHeight: 1.6 }}>
+                Tap below to open the PDF in your phone&apos;s viewer.
+              </p>
               <a
                 href={product.pdfUrl}
                 target="_blank"
                 rel="noopener noreferrer"
                 style={{
-                  display: 'inline-flex', alignItems: 'center', gap: 10,
-                  background: 'linear-gradient(135deg,#052e16,#1a6b38)',
-                  color: '#fff', fontWeight: 700, fontSize: 16,
-                  padding: '16px 40px', borderRadius: 999,
-                  textDecoration: 'none',
-                  boxShadow: '0 6px 20px rgba(5,46,22,0.35)',
-                  marginBottom: 16,
+                  display: 'inline-flex', alignItems: 'center', gap: 8,
+                  background: 'linear-gradient(135deg,#052e16,#14532d)',
+                  color: '#fff', fontWeight: 700, fontSize: 15,
+                  padding: '14px 32px', borderRadius: 999,
+                  textDecoration: 'none', boxShadow: '0 4px 16px rgba(5,46,22,0.3)',
                 }}
               >
                 📂 Open PDF
               </a>
-
-              <div>
-                <a
-                  href={product.pdfUrl}
-                  download
-                  style={{
-                    color: '#16a34a', fontSize: 13, fontWeight: 600,
-                    textDecoration: 'none', display: 'inline-flex',
-                    alignItems: 'center', gap: 5,
-                  }}
-                >
-                  ⬇ Download PDF
+              <div style={{ marginTop: 16 }}>
+                <a href={product.pdfUrl} download
+                  style={{ color: '#16a34a', fontSize: 13, fontWeight: 600, textDecoration: 'none' }}>
+                  ⬇ Download instead
                 </a>
-              </div>
-
-              <div style={{
-                marginTop: 32, padding: '12px 16px', borderRadius: 12,
-                background: '#f0fdf4', border: '1px solid #bbf7d0',
-                fontSize: 11, color: '#16a34a', fontWeight: 600,
-              }}>
-                ✅ Government Approved — CIB Registered
               </div>
             </div>
           )}
