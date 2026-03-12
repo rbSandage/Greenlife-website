@@ -86,7 +86,7 @@ function PublicApp() {
     justifyContent: "center",
     boxShadow: "0 6px 16px rgba(0,0,0,0.25)",
     zIndex: 9999,
-    animation: "waPulse 2s infinite",
+    animation: "waPulse 3s infinite",
     transition: "transform 0.3s"
   }}
   onMouseEnter={(e)=> e.currentTarget.style.transform="scale(1.1)"}
