@@ -4,6 +4,7 @@ import { Link } from 'react-router-dom'
 import { motion, AnimatePresence } from 'framer-motion'
 import { HiSearch, HiX, HiChevronDown, HiCheck } from 'react-icons/hi'
 import { useProducts } from '../../hooks'
+
 import { Send } from 'lucide-react'
 
 /* ── Category config ──────────────────────────────────── */

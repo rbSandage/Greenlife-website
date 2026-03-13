@@ -49,9 +49,9 @@ const LeafIcon = () => (
 // )
 
 const CARDS = [
-  { num: '01', tag: 'Triple Tested',   title: 'Lab Certified Quality',   Icon: LabIcon,    body: 'Tested across 3 independent labs before reaching your field. Zero compromise on purity or efficacy, guaranteed every batch.' },
-  { num: '02', tag: 'Govt. Approved',  title: 'CIB Registered',         Icon: ShieldIcon, body: 'Every product registered with the Central Insecticides Board — legally compliant and safe for use across all Indian farm conditions.' },
-  { num: '03', tag: '40+ Crops',       title: 'Crop Intelligence',       Icon: LeafIcon,   body: '40+ crop-specific formulations developed with agronomists over 20 seasons of real Indian harvest data from the ground up.' },
+  { num: '01', tag: 'Triple Tested',   title: 'Lab Certified Quality',  png:'/images/icons/lab.png',   body: 'Tested across 3 independent labs before reaching your field. Zero compromise on purity or efficacy, guaranteed every batch.' },
+  { num: '02', tag: 'Govt. Approved',  title: 'CIB Registered',          png:'/images/icons/govt.png', body: 'Every product registered with the Central Insecticides Board — legally compliant and safe for use across all Indian farm conditions.' },
+  { num: '03', tag: '40+ Crops',       title: 'Crop Intelligence',        png:'/images/icons/crop.png',   body: '40+ crop-specific formulations developed with agronomists over 20 seasons of real Indian harvest data from the ground up.' },
 //   { num: '04', tag: '48hr Delivery',   title: 'Pan-India Supply',        Icon: TruckIcon,  body: 'Doorstep delivery across MH, GJ, MP and Rajasthan within 48 hours. No minimum order requirement for registered dealers.' },
 //   { num: '05', tag: 'Free Advisory',   title: 'Expert Agri Support',     Icon: PersonIcon, body: 'Free seasonal advice from qualified agronomists. Crop-specific dosage guidance, timing and pest identification — always.' },
 //   { num: '06', tag: 'Best Margins',    title: 'Dealer Advantage',        Icon: MedalIcon,  body: 'Industry-leading margins, flexible credit terms and seasonal promotional support. 200+ active dealers trust GreenLife.' },
@@ -95,8 +95,10 @@ function Card({ card, index }) {
           transform: hov ? 'scale(1.08)' : 'scale(1)',
         }}
       >
-        <card.Icon />
-      </div>
+        <img src={card.png}
+        alt={card.title}
+      style={{width:28,height:28,objectFit:'contain'}} />  
+        </div>
 
       {/* Tag */}
       <span
