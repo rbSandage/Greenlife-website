@@ -105,7 +105,7 @@ export default function Navbar() {
       <button
         onClick={() => setMenuOpen(!menuOpen)}
         className={`md:hidden text-2xl p-1 ${
-          scrolled ? "text-gray-900" : "text-white"
+          scrolled || !isHome ? "text-gray-900" : "text-white"
         }`}
       >
         {menuOpen ? <HiX /> : <HiMenu />}
@@ -115,7 +115,7 @@ export default function Navbar() {
       {menuOpen && (
         <div
           className={`absolute top-full left-0 right-0 ${
-            scrolled
+            scrolled || !isHome
               ? "bg-white border-gray-200"
               : "bg-dark/98 border-green-400/10"
           } backdrop-blur-xl border-t p-6 flex flex-col gap-5 md:hidden`}
@@ -127,7 +127,7 @@ export default function Navbar() {
               className={`text-sm font-medium no-underline ${
                 pathname === l.to
                   ? "text-green-600"
-                  : scrolled
+                  : scrolled || !isHome
                     ? "text-gray-700"
                     : "text-white/70"
               }`}

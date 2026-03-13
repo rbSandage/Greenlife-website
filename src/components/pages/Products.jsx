@@ -5,18 +5,20 @@ import { motion, AnimatePresence } from 'framer-motion'
 import { HiSearch, HiX, HiChevronDown, HiCheck } from 'react-icons/hi'
 import { useProducts } from '../../hooks'
 import { Send } from 'lucide-react'
-import { CATEGORIES} from '../../data/products'
 
 /* ── Category config ──────────────────────────────────── */
 const CATEGORY_META = {
-  All:            { emoji: '🌾', color: '#16a34a', light: '#f0fdf4', label: 'All Categories' },
-  Fungicide:      { emoji: '🍄', color: '#7c3aed', light: '#f5f3ff', label: 'Fungicide'      },
-  Insecticide:    { emoji: '🌿', color: '#0891b2', light: '#ecfeff', label: 'Insecticide'    },
-  Herbicide:      { emoji: '🌱', color: '#ca8a04', light: '#fefce8', label: 'Herbicide'      },
-  Fertilizer:     { emoji: '🌻', color: '#dc2626', light: '#fff1f2', label: 'Fertilizer'     },
-  'Bio-control':  { emoji: '🦋', color: '#059669', light: '#f0fdf4', label: 'Bio-control'    },
-  'Plant Growth': { emoji: '🌾', color: '#9333ea', light: '#faf5ff', label: 'Plant Growth'   },
+  All:              { emoji: '🌾', color: '#16a34a', light: '#f0fdf4', label: 'All Categories' },
+  Fungicide:        { emoji: '🍄', color: '#7c3aed', light: '#f5f3ff', label: 'Fungicide'      },
+  Insecticide:      { emoji: '🌿', color: '#0891b2', light: '#ecfeff', label: 'Insecticide'    },
+  Herbicide:        { emoji: '🌱', color: '#ca8a04', light: '#fefce8', label: 'Herbicide'      },
+  Fertilizer:       { emoji: '🌻', color: '#dc2626', light: '#fff1f2', label: 'Fertilizer'     },
+  'Bio-pesticide':  { emoji: '🦋', color: '#059669', light: '#f0fdf4', label: 'Bio-pesticide'  },
+  PGR:              { emoji: '🌾', color: '#9333ea', light: '#faf5ff', label: 'PGR'            },
 }
+
+// Derived from CATEGORY_META so they always stay in sync
+const CATEGORIES = Object.keys(CATEGORY_META).filter(k => k !== 'All')
 
 /* ── Hero edge produce ────────────────────────────────── */
 const HERO_FLOATS = [

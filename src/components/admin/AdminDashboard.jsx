@@ -3,9 +3,22 @@ import { useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import toast from 'react-hot-toast'
 import { useAuth, useProducts, useProductCRUD, useEnquiries } from '../../hooks'
-import { CATEGORIES, CATEGORY_COLORS } from '../../data/products'
 import { HiLogout, HiPlus, HiPencil, HiTrash, HiStar, HiEye, HiEyeOff, HiMail, HiMailOpen, HiX, HiMenu, HiDownload, HiDocumentText } from 'react-icons/hi'
 import QRCode from 'qrcode'
+
+/* ── Category colours (no external dependency) ──────────── */
+const CATEGORY_COLORS = {
+  Fungicide:        { bg: 'bg-purple-100', text: 'text-purple-700' },
+  Insecticide:      { bg: 'bg-cyan-100',   text: 'text-cyan-700'   },
+  Herbicide:        { bg: 'bg-yellow-100', text: 'text-yellow-700' },
+  Fertilizer:       { bg: 'bg-red-100',    text: 'text-red-700'    },
+ 'Bio-pesticide':  { bg: 'bg-green-100',  text: 'text-green-700'  },
+  PGR:              { bg: 'bg-violet-100', text: 'text-violet-700' },
+}
+
+
+/* ── Categories ─────────────────────────────────────────── */
+const CATEGORIES = ['Fungicide', 'Insecticide', 'Herbicide', 'Fertilizer', 'Bio-pesticide', 'PGR']
 
 /* ── ProductForm ────────────────────────────────────────── */
 const EMPTY = { name:'', category:'Insecticide', description:'', activeIngredient:'', dosage:'', formulation:'', packSizes:'', crops:'', safetyInfo:'', featured:false, active:true, imageUrl:'', pdfUrl:'', pdfName:'' }
@@ -88,7 +101,7 @@ function ProductForm({ initial = EMPTY, onSave, onCancel, uploading, progress, u
         <div>
           <label className={label}>Category *</label>
           <select name="category" value={form.category} onChange={handle} className={`${input} bg-white`}>
-            {CATEGORIES.filter(c => c !== 'All').map(c => <option key={c} value={c}>{c}</option>)}
+            {CATEGORIES.map(c => <option key={c} value={c}>{c}</option>)}
           </select>
         </div>
       </div>

@@ -4,10 +4,22 @@ import { useState, useEffect } from 'react'
 import { useParams, Link } from 'react-router-dom'
 import { motion } from 'framer-motion'
 import { doc, getDoc } from 'firebase/firestore'
-import { HiArrowLeft, HiPhone, HiMail } from 'react-icons/hi'
+import { HiArrowLeft, HiPhone} from 'react-icons/hi'
 import { db } from '../../firebase/config'
-import { CATEGORY_COLORS } from '../../data/products'
 import {Send } from 'lucide-react'
+
+
+/* ── Category colours (no external dependency) ──────────── */
+const CATEGORY_COLORS = {
+  Fungicide:        { bg: 'bg-purple-100', text: 'text-purple-700' },
+  Insecticide:      { bg: 'bg-cyan-100',   text: 'text-cyan-700'   },
+  Herbicide:        { bg: 'bg-yellow-100', text: 'text-yellow-700' },
+  Fertilizer:       { bg: 'bg-red-100',    text: 'text-red-700'    },
+  'Bio-pesticide':  { bg: 'bg-green-100',  text: 'text-green-700'  },
+  PGR:              { bg: 'bg-violet-100', text: 'text-violet-700' },
+}
+
+
 
 export default function ProductDetail() {
   const { id } = useParams()
@@ -46,7 +58,7 @@ export default function ProductDetail() {
     </div>
   )
 
-  const colors = CATEGORY_COLORS[product.category] || { bg: 'bg-gray-100', text: 'text-gray-700' }
+   const colors = CATEGORY_COLORS[product.category] || { bg: 'bg-gray-100', text: 'text-gray-700' }
 
   return (
     <div className="pt-[70px]">
