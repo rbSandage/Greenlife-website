@@ -42,7 +42,13 @@ const sanitize  = (s = "") => s.replace(/[<>"'`]/g, "").trim();
 const isSafeUrl = (u) => { try { const p = new URL(u); return ["http:","https:"].includes(p.protocol) && !BLOCKED.some(r=>r.test(u)); } catch { return false; } };
 
 // ── Dynamic QR Utilities ─────────────────────────────────────────────────────
-const genCode = () => Math.random().toString(36).slice(2, 9).toUpperCase() // e.g. "K7X2M9P"
+// Collision-safe code — timestamp prefix + random suffix
+// Timestamp makes it unique per millisecond, random handles same-ms edge case
+const genCode = () => {
+  const ts  = Date.now().toString(36).toUpperCase().slice(-4); // last 4 chars of timestamp
+  const rnd = Math.random().toString(36).slice(2, 6).toUpperCase(); // 4 random chars
+  return `${ts}${rnd}`; // e.g. "K9X2M7P4" — 8 chars, practically collision-proof
+};
 
 const buildContent = (type, d) => {
   switch (type) {
@@ -511,9 +517,9 @@ export default function StaffQRPage() {
   const unlock = () => { sessionStorage.setItem("gl_qr_auth","1"); setUnlocked(true); };
   const logout  = () => { sessionStorage.removeItem("gl_qr_auth"); setUnlocked(false); };
 
-  // Auto-load dynamic QRs when switching to dynamic tab
+  // Auto-load dynamic QRs when switching to dynamic or analytics tab
   useEffect(() => {
-    if (tab === "dynamic" && unlocked) loadDynamicQRs();
+    if ((tab === "dynamic" || tab === "analytics") && unlocked) loadDynamicQRs();
   }, [tab, unlocked]);
 
   const setField = (k,v) => setFormData(p=>({...p,[k]:v}));
@@ -722,7 +728,7 @@ export default function StaffQRPage() {
 
           {/* Tabs */}
           <div style={{display:"flex",gap:4}}>
-            {[["generator","⚡ Generator"],["dynamic","🔄 Dynamic QR"],["history",`🕑 History (${history.length})`]].map(([id,lbl])=>(
+            {[["generator","⚡ Generator"],["dynamic","🔄 Dynamic QR"],["analytics","📊 Analytics"],["history",`🕑 History (${history.length})`]].map(([id,lbl])=>(
               <button key={id} onClick={()=>setTab(id)} style={{
                 padding:"7px 14px",borderRadius:8,border:"none",
                 background:tab===id?"#dcfce7":"transparent",
@@ -1146,6 +1152,143 @@ export default function StaffQRPage() {
           </div>
         )}
       </div>
+
+      {/* ══════════════ ANALYTICS TAB ══════════════ */}
+        {tab==="analytics" && (
+          <div className="fade-up" style={{paddingTop:28,paddingBottom:60}}>
+
+            {/* Header */}
+            <div style={{display:"flex",alignItems:"center",justifyContent:"space-between",marginBottom:28,flexWrap:"wrap",gap:12}}>
+              <div>
+                <h2 style={{fontSize:26,fontWeight:900,color:"#14532d",letterSpacing:"-0.5px"}}>📊 QR Analytics</h2>
+                <p style={{fontSize:13,color:"#9ca3af",marginTop:3}}>Real-time scan data from all Dynamic QR codes</p>
+              </div>
+              <button onClick={loadDynamicQRs} style={{padding:"9px 18px",borderRadius:10,fontSize:12,fontWeight:700,background:"#dcfce7",border:"1px solid #bbf7d0",color:"#15803d",cursor:"pointer"}}>
+                {dynLoading ? "⏳ Loading…" : "🔄 Refresh"}
+              </button>
+            </div>
+
+            {/* Summary Stats */}
+            {dynList.length > 0 && (
+              <div style={{display:"grid",gridTemplateColumns:"repeat(auto-fit,minmax(160px,1fr))",gap:14,marginBottom:28}}>
+                {/* Total QRs */}
+                <div style={{background:"#fff",border:"1px solid #d1fae5",borderRadius:16,padding:"20px 22px"}}>
+                  <p style={{fontSize:11,fontWeight:700,color:"#9ca3af",textTransform:"uppercase",letterSpacing:"0.07em",marginBottom:6}}>Total QR Codes</p>
+                  <p style={{fontSize:32,fontWeight:900,color:"#14532d"}}>{dynList.length}</p>
+                </div>
+                {/* Total Scans */}
+                <div style={{background:"#fff",border:"1px solid #d1fae5",borderRadius:16,padding:"20px 22px"}}>
+                  <p style={{fontSize:11,fontWeight:700,color:"#9ca3af",textTransform:"uppercase",letterSpacing:"0.07em",marginBottom:6}}>Total Scans</p>
+                  <p style={{fontSize:32,fontWeight:900,color:"#16a34a"}}>{dynList.reduce((sum,q)=>sum+(q.scanCount||0),0)}</p>
+                </div>
+                {/* Active QRs */}
+                <div style={{background:"#fff",border:"1px solid #d1fae5",borderRadius:16,padding:"20px 22px"}}>
+                  <p style={{fontSize:11,fontWeight:700,color:"#9ca3af",textTransform:"uppercase",letterSpacing:"0.07em",marginBottom:6}}>Active QRs</p>
+                  <p style={{fontSize:32,fontWeight:900,color:"#15803d"}}>{dynList.filter(q=>q.active!==false).length}</p>
+                </div>
+                {/* Most Scanned */}
+                <div style={{background:"#fff",border:"1px solid #d1fae5",borderRadius:16,padding:"20px 22px"}}>
+                  <p style={{fontSize:11,fontWeight:700,color:"#9ca3af",textTransform:"uppercase",letterSpacing:"0.07em",marginBottom:6}}>Top QR Scans</p>
+                  <p style={{fontSize:32,fontWeight:900,color:"#14532d"}}>{dynList.length>0?Math.max(...dynList.map(q=>q.scanCount||0)):0}</p>
+                </div>
+              </div>
+            )}
+
+            {/* Per QR Analytics */}
+            {dynLoading && (
+              <div style={{textAlign:"center",padding:"40px 0"}}>
+                <div style={{width:32,height:32,border:"3px solid #d1fae5",borderTopColor:"#16a34a",borderRadius:"50%",animation:"spin 0.7s linear infinite",margin:"0 auto 12px"}}/>
+                <p style={{fontSize:13,color:"#9ca3af"}}>Loading analytics…</p>
+              </div>
+            )}
+
+            {!dynLoading && dynList.length === 0 && (
+              <div style={{textAlign:"center",padding:"60px 20px"}}>
+                <div style={{fontSize:48,marginBottom:14}}>📊</div>
+                <p style={{fontSize:16,fontWeight:700,color:"#9ca3af",marginBottom:6}}>No Dynamic QRs yet</p>
+                <p style={{fontSize:13,color:"#d1d5db",marginBottom:20}}>Create Dynamic QR codes to see scan analytics here</p>
+                <button onClick={()=>setTab("generator")} style={{padding:"12px 24px",borderRadius:12,background:"linear-gradient(135deg,#16a34a,#15803d)",color:"#fff",fontSize:14,fontWeight:800,border:"none",cursor:"pointer"}}>
+                  Create Dynamic QR →
+                </button>
+              </div>
+            )}
+
+            {!dynLoading && dynList.length > 0 && (
+              <div style={{display:"flex",flexDirection:"column",gap:12}}>
+                {/* Sort by scan count — most scanned first */}
+                {[...dynList].sort((a,b)=>(b.scanCount||0)-(a.scanCount||0)).map((q,i)=>{
+                  const totalScans = dynList.reduce((sum,qq)=>sum+(qq.scanCount||0),0);
+                  const pct = totalScans > 0 ? Math.round(((q.scanCount||0)/totalScans)*100) : 0;
+                  const isTop = i === 0 && (q.scanCount||0) > 0;
+                  return (
+                    <div key={q.code} style={{
+                      background:"#fff",
+                      border:`1px solid ${isTop?"#16a34a":"#d1fae5"}`,
+                      borderRadius:16,padding:"18px 22px",
+                      transition:"border-color 0.15s",
+                    }}>
+                      <div style={{display:"flex",alignItems:"center",gap:16,flexWrap:"wrap"}}>
+
+                        {/* Rank */}
+                        <div style={{
+                          width:36,height:36,borderRadius:10,flexShrink:0,
+                          background:i===0?"linear-gradient(135deg,#16a34a,#15803d)":i===1?"#f0fdf4":i===2?"#f9fafb":"#f9fafb",
+                          display:"flex",alignItems:"center",justifyContent:"center",
+                          fontSize:i<3?16:13,fontWeight:800,
+                          color:i===0?"#fff":"#6b7280",
+                          border:i===0?"none":"1px solid #d1fae5",
+                        }}>
+                          {i===0?"🏆":i===1?"🥈":i===2?"🥉":`#${i+1}`}
+                        </div>
+
+                        {/* Info */}
+                        <div style={{flex:1,minWidth:150}}>
+                          <div style={{display:"flex",alignItems:"center",gap:8,marginBottom:5,flexWrap:"wrap"}}>
+                            <span style={{fontWeight:800,fontSize:14,color:"#14532d"}}>{q.label||q.code}</span>
+                            <span style={{padding:"2px 8px",borderRadius:100,background:"#dcfce7",fontSize:11,fontWeight:700,color:"#15803d"}}>{q.type}</span>
+                            {q.active===false && <span style={{padding:"2px 8px",borderRadius:100,background:"#fee2e2",fontSize:11,fontWeight:700,color:"#b91c1c"}}>Paused</span>}
+                            {isTop && <span style={{padding:"2px 8px",borderRadius:100,background:"#fef9c3",fontSize:11,fontWeight:700,color:"#854d0e"}}>⭐ Top</span>}
+                          </div>
+
+                          {/* Progress bar */}
+                          <div style={{background:"#f0fdf4",borderRadius:100,height:8,overflow:"hidden",marginBottom:5}}>
+                            <div style={{
+                              height:"100%",borderRadius:100,
+                              background:"linear-gradient(90deg,#16a34a,#4ade80)",
+                              width:`${pct}%`,transition:"width 0.4s ease",
+                            }}/>
+                          </div>
+
+                          <div style={{display:"flex",gap:16,flexWrap:"wrap"}}>
+                            <span style={{fontSize:11,color:"#6b7280"}}>
+                              Code: <span style={{fontFamily:"monospace",fontWeight:700,color:"#14532d"}}>{q.code}</span>
+                            </span>
+                            {q.lastScanned && (
+                              <span style={{fontSize:11,color:"#9ca3af"}}>
+                                Last scan: {new Date(q.lastScanned?.toDate ? q.lastScanned.toDate() : q.lastScanned).toLocaleString()}
+                              </span>
+                            )}
+                            {!q.lastScanned && (
+                              <span style={{fontSize:11,color:"#d1d5db"}}>Never scanned yet</span>
+                            )}
+                          </div>
+                        </div>
+
+                        {/* Scan Count */}
+                        <div style={{textAlign:"center",flexShrink:0,minWidth:80}}>
+                          <p style={{fontSize:36,fontWeight:900,color:isTop?"#16a34a":"#14532d",lineHeight:1}}>{q.scanCount||0}</p>
+                          <p style={{fontSize:11,color:"#9ca3af",fontWeight:600}}>scans</p>
+                          <p style={{fontSize:11,color:"#16a34a",fontWeight:700,marginTop:2}}>{pct}%</p>
+                        </div>
+
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            )}
+          </div>
+        )}
 
       {/* Footer */}
       <footer style={{borderTop:"1px solid #d1fae5",padding:"20px",textAlign:"center",background:"#fff"}}>

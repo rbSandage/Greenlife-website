@@ -1,48 +1,50 @@
 // src/components/pages/QRRedirect.jsx
 import { useEffect, useState } from 'react'
 import { useParams }           from 'react-router-dom'
-import { doc, getDoc, updateDoc, increment } from 'firebase/firestore'
-import { db } from '../../firebase/config'   // ← your existing firebase config
+import { doc, getDoc, updateDoc, increment} from 'firebase/firestore'
+import { db } from '../../firebase/config'
 
 export default function QRRedirect() {
-  const { code }               = useParams()
-  const [status, setStatus]    = useState('loading') // loading|redirecting|notfound|error
+  const { code }            = useParams()
+  const [status, setStatus] = useState('loading')
 
   useEffect(() => {
     if (!code) { setStatus('notfound'); return }
-    redirect()
+    handleRedirect()
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [code])
 
-  const redirect = async () => {
+  const handleRedirect = async () => {
     try {
       const ref  = doc(db, 'qr_codes', code)
       const snap = await getDoc(ref)
 
-      if (!snap.exists()) { setStatus('notfound'); return }
+      if (!snap.exists())              { setStatus('notfound'); return }
 
       const data = snap.data()
 
-      // Check if QR is active
-      if (data.active === false) { setStatus('notfound'); return }
+      if (data.active === false)       { setStatus('notfound'); return }
 
-      // Check expiry if set
       if (data.expiresAt && data.expiresAt.toDate() < new Date()) {
         setStatus('notfound'); return
       }
 
-      // ✅ Increment scan count silently
-      updateDoc(ref, {
-        scanCount: increment(1),
-        lastScanned: new Date(),
-      }).catch(() => {}) // non-blocking — don't fail redirect if this errors
-
       setStatus('redirecting')
 
-      // Redirect after tiny delay (shows branded screen)
-      setTimeout(() => {
-        window.location.replace(data.destination)
-      }, 800)
+      // ✅ AWAIT the scan count update BEFORE redirecting
+      // This ensures Firestore write completes before page unloads
+      try {
+        await updateDoc(ref, {
+          scanCount: increment(1),
+          lastScanned: new Date(),
+        })
+      } catch (updateErr) {
+        // Log but don't block redirect — analytics failure shouldn't break the QR
+        console.warn('Scan count update failed:', updateErr)
+      }
+
+      // Redirect AFTER write completes
+      window.location.replace(data.destination)
 
     } catch (err) {
       console.error('QR redirect error:', err)
@@ -50,13 +52,10 @@ export default function QRRedirect() {
     }
   }
 
-  // ── UI ─────────────────────────────────────────────────────────────
-
   if (status === 'loading' || status === 'redirecting') {
     return (
       <div style={styles.page}>
         <div style={styles.card}>
-          {/* GreenLife branding */}
           <div style={styles.logo}>
             <div style={styles.logoIcon}>🌿</div>
             <div>
@@ -64,20 +63,17 @@ export default function QRRedirect() {
               <p style={styles.logoSub}>Cropcare</p>
             </div>
           </div>
-
-          {/* Spinner */}
           <div style={styles.spinnerWrap}>
             <div style={styles.spinner} />
           </div>
-
           <p style={styles.redirectText}>
             {status === 'loading' ? 'Loading…' : 'Redirecting you…'}
           </p>
           <p style={styles.redirectSub}>Please wait a moment</p>
         </div>
         <style>{`
-          @keyframes spin { to { transform: rotate(360deg); } }
-          @keyframes fadeUp { from { opacity:0; transform:translateY(12px); } to { opacity:1; transform:none; } }
+          @keyframes spin    { to { transform: rotate(360deg); } }
+          @keyframes fadeUp  { from { opacity:0; transform:translateY(12px); } to { opacity:1; transform:none; } }
         `}</style>
       </div>
     )
@@ -119,7 +115,7 @@ export default function QRRedirect() {
           <p style={{ fontSize: 14, color: '#6b7280', marginBottom: 24 }}>
             Could not load this QR code. Please try again.
           </p>
-          <button onClick={redirect} style={styles.homeBtn}>Try Again</button>
+          <button onClick={handleRedirect} style={styles.homeBtn}>Try Again</button>
         </div>
       </div>
     )
@@ -127,8 +123,6 @@ export default function QRRedirect() {
 
   return null
 }
-
-// ── Styles ──────────────────────────────────────────────────────────────────
 
 const styles = {
   page: {
