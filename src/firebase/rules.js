@@ -37,5 +37,5 @@ service firebase.storage {
       allow write: if request.auth != null;
     }
   }
-}
+// 
 */

@@ -136,6 +136,7 @@ export function useProductCRUD() {
   const deleteProduct = useCallback(async (id) => {
     await deleteDoc(doc(db, 'products', id))
     // Cloudinary images are NOT auto-deleted (requires backend with API secret)
+    
   }, [])
 
   const toggleField = useCallback(async (id, field, value) => {
