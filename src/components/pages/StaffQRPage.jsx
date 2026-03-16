@@ -15,6 +15,7 @@ const CLOUDINARY_CLOUD_NAME    = "dzpenviyy";   // ← your Cloudinary cloud nam
 const CLOUDINARY_UPLOAD_PRESET = "product_upload";        // ← your unsigned upload preset
 const STAFF_PIN   = process.env.REACT_APP_STAFF_PIN || "1234"
 const SITE_URL    = process.env.REACT_APP_SITE_URL || window.location.origin
+
 // ═══════════════════════════════════════════════════════════════
 //  QR TYPES
 // ═══════════════════════════════════════════════════════════════
@@ -540,7 +541,13 @@ export default function StaffQRPage() {
     const url = format==="svg"
       ? buildQrSvg(content, size, fg.replace("#",""), bg.replace("#",""))
       : buildQrUrl(content, size, fg.replace("#",""), bg.replace("#",""));
-    const fname = `greenlife-qr-${label||qrType.toLowerCase()}-${Date.now()}.${format}`;
+    // Use label as filename — clean it for safe file naming
+    const cleanLabel = (label || `greenlife-qr-${qrType.toLowerCase()}`)
+      .replace(/[^a-zA-Z0-9\s\-_]/g, '')   // remove special chars
+      .replace(/\s+/g, '-')                  // spaces to hyphens
+      .toLowerCase()
+      .trim() || 'greenlife-qr';
+    const fname = `${cleanLabel}.${format}`;
     await downloadFile(url, fname);
     setTimeout(()=>setDlState(""),2500);
   };
@@ -1061,7 +1068,7 @@ export default function StaffQRPage() {
                         <button onClick={()=>toggleActive(q.code,q.active)} style={{padding:"8px 14px",borderRadius:9,fontSize:12,fontWeight:700,background:q.active?"#fef2f2":"#f0fdf4",border:`1px solid ${q.active?"#fecaca":"#d1fae5"}`,color:q.active?"#b91c1c":"#15803d",cursor:"pointer"}}>
                           {q.active?"⏸ Pause":"▶ Resume"}
                         </button>
-                        <button onClick={()=>downloadFile(buildQrUrl(`${SITE_URL}/qr/${q.code}`,400,"000000","ffffff"),`dynamic-qr-${q.code}.png`)} style={{padding:"8px 14px",borderRadius:9,fontSize:12,fontWeight:700,background:"linear-gradient(135deg,#16a34a,#15803d)",color:"#fff",border:"none",cursor:"pointer"}}>⬇ PNG</button>
+                        <button onClick={()=>downloadFile(buildQrUrl(`${SITE_URL}/qr/${q.code}`,400,"000000","ffffff"),`${(q.label||q.code).replace(/[^a-zA-Z0-9\s\-_]/g,"").replace(/\s+/g,"-").toLowerCase()}.png`)} style={{padding:"8px 14px",borderRadius:9,fontSize:12,fontWeight:700,background:"linear-gradient(135deg,#16a34a,#15803d)",color:"#fff",border:"none",cursor:"pointer"}}>⬇ PNG</button>
                         <button onClick={()=>deleteDynamicQR(q.code)} style={{padding:"8px 14px",borderRadius:9,fontSize:12,fontWeight:700,background:"#fef2f2",border:"1px solid #fecaca",color:"#b91c1c",cursor:"pointer"}}>🗑 Delete</button>
                       </div>
                     </div>
